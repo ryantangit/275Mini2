@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package count;
+
 service CountService {
 	rpc Count(CountRequest) returns (CountResponse); 
 }
