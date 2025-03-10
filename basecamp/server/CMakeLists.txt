@@ -1,67 +1,151 @@
+
+######## Definition of gRPC / ProtoBuf config starts - from grpc/examples/cpp/cmake 
 cmake_minimum_required(VERSION 3.13)
-project(Count)
-set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-g)
+project(Count C CXX)
 
-## Finding pcakage on Protobuf and gRPC
-option(protobuf_MODULE_COMPATIBLE TRUE)
-find_package(Protobuf CONFIG REQUIRED)
-message(STATUS "Using protobuf ${Protobuf_VERSION}")
+if(MSVC)
+  add_definitions(-D_WIN32_WINNT=0x600)
+endif()
 
-set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
-set(_REFLECTION gRPC::grpc++_reflection)
-if(CMAKE_CROSSCOMPILING)
-   find_program(_PROTOBUF_PROTOC protoc)
+find_package(Threads REQUIRED)
+
+if(GRPC_AS_SUBMODULE)
+  # One way to build a projects that uses gRPC is to just include the
+  # entire gRPC project tree via "add_subdirectory".
+  # This approach is very simple to use, but the are some potential
+  # disadvantages:
+  # * it includes gRPC's CMakeLists.txt directly into your build script
+  #   without and that can make gRPC's internal setting interfere with your
+  #   own build.
+  # * depending on what's installed on your system, the contents of submodules
+  #   in gRPC's third_party/* might need to be available (and there might be
+  #   additional prerequisites required to build them). Consider using
+  #   the gRPC_*_PROVIDER options to fine-tune the expected behavior.
+  #
+  # A more robust approach to add dependency on gRPC is using
+  # cmake's ExternalProject_Add (see cmake_externalproject/CMakeLists.txt).
+
+  # Include the gRPC's cmake build (normally grpc source code would live
+  # in a git submodule called "third_party/grpc", but this example lives in
+  # the same repository as gRPC sources, so we just look a few directories up)
+  add_subdirectory(../../.. ${CMAKE_CURRENT_BINARY_DIR}/grpc EXCLUDE_FROM_ALL)
+  message(STATUS "Using gRPC via add_subdirectory.")
+
+  # After using add_subdirectory, we can now use the grpc targets directly from
+  # this build.
+  set(_PROTOBUF_LIBPROTOBUF libprotobuf)
+  set(_REFLECTION grpc++_reflection)
+  set(_ORCA_SERVICE grpcpp_orca_service)
+  if(CMAKE_CROSSCOMPILING)
+    find_program(_PROTOBUF_PROTOC protoc)
+  else()
+    set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+  endif()
+  set(_GRPC_GRPCPP grpc++)
+  if(CMAKE_CROSSCOMPILING)
+    find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+  else()
+    set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+  endif()
+elseif(GRPC_FETCHCONTENT)
+  # Another way is to use CMake's FetchContent module to clone gRPC at
+  # configure time. This makes gRPC's source code available to your project,
+  # similar to a git submodule.
+  message(STATUS "Using gRPC via add_subdirectory (FetchContent).")
+  include(FetchContent)
+  FetchContent_Declare(
+    grpc
+    GIT_REPOSITORY https://github.com/grpc/grpc.git
+    # when using gRPC, you will actually set this to an existing tag, such as
+    # v1.25.0, v1.26.0 etc..
+    # For the purpose of testing, we override the tag used to the commit
+    # that's currently under test.
+    GIT_TAG        vGRPC_TAG_VERSION_OF_YOUR_CHOICE)
+  FetchContent_MakeAvailable(grpc)
+
+  # Since FetchContent uses add_subdirectory under the hood, we can use
+  # the grpc targets directly from this build.
+  set(_PROTOBUF_LIBPROTOBUF libprotobuf)
+  set(_REFLECTION grpc++_reflection)
+  set(_PROTOBUF_PROTOC $<TARGET_FILE:protoc>)
+  set(_GRPC_GRPCPP grpc++)
+  if(CMAKE_CROSSCOMPILING)
+    find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+  else()
+    set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+  endif()
 else()
-   set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
-endif() 
+  # This branch assumes that gRPC and all its dependencies are already installed
+  # on this system, so they can be located by find_package().
 
+  # Find Protobuf installation
+  # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
+  option(protobuf_MODULE_COMPATIBLE TRUE)
+  find_package(Protobuf CONFIG REQUIRED)
+  message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
-find_package(gRPC CONFIG REQUIRED)
-message(STATUS "Using gRPC ${gRPC_VERSION}")
+  set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
+  set(_REFLECTION gRPC::grpc++_reflection)
+  if(CMAKE_CROSSCOMPILING)
+    find_program(_PROTOBUF_PROTOC protoc)
+  else()
+    set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+  endif()
 
-set(_GRPC_GRPCPP gRPC::grpc++)
-if(CMAKE_CROSSCOMPILING)
-   find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
-else()
-   set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
-endif() 
-#####
+  # Find gRPC installation
+  # Looks for gRPCConfig.cmake file installed by gRPC's cmake installation.
+  find_package(gRPC CONFIG REQUIRED)
+  message(STATUS "Using gRPC ${gRPC_VERSION}")
 
-# the protobuf definitions (absolute path needed)
-set(BASE_DIR ../${CMAKE_CURRENT_SOURCE_DIR})
-set(PROTOS_BASE ${BASE_DIR}/proto_def)
-message("CCurrent PROTOS_BASE directory: ${PROTOS_BASE}")
-set(PROTOS ${PROTOS_BASE}/count.proto)
+  set(_GRPC_GRPCPP gRPC::grpc++)
+  if(CMAKE_CROSSCOMPILING)
+    find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+  else()
+    set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+  endif()
+endif()
+######## Definition of gRPC / ProtoBuf config ends
 
-set(PROTO_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/proto-src)
-file(MAKE_DIRECTORY ${PROTO_SRC_DIR})
-include_directories(${PROTO_SRC_DIR})
+#### Basecamp specific definitions begin
 
-# note each file must be listed separately!
-set(PROTO_SRCS "${PROTO_SRC_DIR}/count.pb.cc")
-set(GRPC_SRCS "${PROTO_SRC_DIR}/count.grpc.pb.cc")
-set(PROTO_HDRS "${PROTO_SRC_DIR}/count.pb.h")
-set(GRPC_HDRS "${PROTO_SRC_DIR}/count.grpc.pb.h")
+# Proto file
+get_filename_component(count_proto "../proto_def/count.proto" ABSOLUTE)
+get_filename_component(count_proto_path "${count_proto}" PATH)
 
-message(STATUS "grpc plugin: ${_GRPC_CPP_PLUGIN_EXECUTABLE}")
-
+# Generated sources
+set(count_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/count.pb.cc")
+set(count_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/count.pb.h")
+set(count_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/count.grpc.pb.cc")
+set(count_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/count.grpc.pb.h")
 add_custom_command(
-   OUTPUT "${PROTO_SRCS}" "${GRPC_SRCS}" "${PROTO_HDRS}" "${GRPC_HDRS}"
-   COMMAND ${_PROTOBUF_PROTOC}
-   ARGS --grpc_out "${PROTO_SRC_DIR}"
-        --cpp_out "${PROTO_SRC_DIR}"
-        -I "${PROTOS_BASE}"
-        --plugin=protoc-gen-grpc=${_GRPC_CPP_PLUGIN_EXECUTABLE}
-        "${PROTOS}"
-   DEPENDS "${PROTOS}"
-   COMMENT "creating generated protobuf/grpc files"
-   VERBATIM
-)
+      OUTPUT "${count_proto_srcs}" "${count_proto_hdrs}" "${count_grpc_srcs}" "${count_grpc_hdrs}"
+      COMMAND ${_PROTOBUF_PROTOC}
+      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+        -I "${count_proto_path}"
+        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+        "${count_proto}"
+      DEPENDS "${count_proto}")
 
-include_directories("PROTO_SRC_DIR")
+# Include generated *.pb.h files
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-add_executable(count-main
-   count.cpp
-)
+# count_grpc_proto
+add_library(count_grpc_proto
+  ${count_grpc_srcs}
+  ${count_grpc_hdrs}
+  ${count_proto_srcs}
+  ${count_proto_hdrs})
+target_link_libraries(count_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
+add_executable(count_server "count_server.cpp")
+target_link_libraries(count_server
+	count_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
 
