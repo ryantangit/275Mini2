@@ -1,4 +1,4 @@
-syntax = "proto3"
+syntax = "proto3";
 
 service CountService {
 	rpc Count(CountRequest) returns (CountResponse); 
@@ -9,5 +9,5 @@ message CountRequest {
 }
 
 message CountResponse {
-	int count = 1;
+	uint32 count = 1;
 }
