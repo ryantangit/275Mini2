@@ -9,3 +9,5 @@
 - [x] Defining first proto buffer
 - [x] Building first C++ gRPC server
 - [x] Baseline non-async server connection for basecamp
+- [] Define async server connection for basecamp
+- [] Distributing work load across different servers
