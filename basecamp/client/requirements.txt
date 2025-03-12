@@ -1,3 +1,4 @@
+asyncio==3.4.3
 grpcio==1.70.0
 grpcio-tools==1.70.0
 protobuf==5.29.3

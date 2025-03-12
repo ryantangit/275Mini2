@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ./generate_pb.sh
 
 # After server is up and running
-python3 count_client.py
+python3 unit_tests.py
 
 ```
 
@@ -39,7 +39,10 @@ cmake ..
 # Build the server binary
 make -j 4
 
-# Run server
+# Run Async server
+./count_server_async
+
+# Optional: Run Synchronous server
 ./count_server
 
 # Optional: Create compile_commands.json for clang LSP
