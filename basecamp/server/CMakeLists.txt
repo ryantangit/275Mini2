@@ -149,3 +149,13 @@ target_link_libraries(count_server
   ${_PROTOBUF_LIBPROTOBUF})
 
 
+add_executable(count_server_async "count_server_async.cpp")
+target_link_libraries(count_server_async
+	count_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
+
+
+
