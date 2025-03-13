@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ./generate_pb.sh
 
 # After server is up and running
-python3 unit_tests.py
+python3 unit_tests.py   -- ensure the server ports are correct first
 
 ```
 
@@ -39,7 +39,10 @@ cmake ..
 # Build the server binary
 make -j 4
 
-# Run Async server
+# Run Callback Async server
+./count_server_callback
+
+# Optional: Run Completion Queue Async server
 ./count_server_async
 
 # Optional: Run Synchronous server

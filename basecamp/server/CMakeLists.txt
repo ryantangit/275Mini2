@@ -141,21 +141,14 @@ target_link_libraries(count_grpc_proto
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-add_executable(count_server "count_server.cpp")
-target_link_libraries(count_server
-	count_grpc_proto
-  ${_REFLECTION}
-  ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF})
 
-
-add_executable(count_server_async "count_server_async.cpp")
-target_link_libraries(count_server_async
-	count_grpc_proto
-  ${_REFLECTION}
-  ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF})
-
-
-
+foreach(_target
+  count_server count_server_async count_server_callback)
+  add_executable(${_target} "${_target}.cpp")
+  target_link_libraries(${_target}
+    count_grpc_proto
+    ${_REFLECTION}
+    ${_GRPC_GRPCPP}
+    ${_PROTOBUF_LIBPROTOBUF})
+endforeach()
 

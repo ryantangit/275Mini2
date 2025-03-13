@@ -21,7 +21,7 @@ class CountImpl final : public CountService::Service {
 };
 
 void RunServer() {
-  std::string server_address("0.0.0.0:8765");
+  std::string server_address("0.0.0.0:7777");
   CountImpl service;
   grpc::EnableDefaultHealthCheckService(true);
   ServerBuilder builder;

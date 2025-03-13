@@ -9,7 +9,6 @@
 
 using grpc::Server;
 using grpc::ServerBuilder;
-
 class CountImpl final {
 	private:
   	std::unique_ptr<grpc::ServerCompletionQueue> cq_;
@@ -20,6 +19,7 @@ class CountImpl final {
 			// Take in the "service" instance (in this case representing an asynchronous
 			// server) and the completion queue "cq" used for asynchronous communication
 			// with the gRPC runtime.
+			
 			CallData(count::CountService::AsyncService* service, grpc::ServerCompletionQueue* cq)
 					: service_(service), cq_(cq), responder_(&ctx_), status_(CREATE) {
 				// Invoke the serving logic right away.
@@ -122,7 +122,7 @@ class CountImpl final {
       // memory address of a CallData instance.
       // The return value of Next should always be checked. This return value
       // tells us whether there is any kind of event or cq_ is shutting down.
-			
+			//
 			//Blocking Call
 			if (!cq_->Next(&tag, &ok)) {
 				std::cout << "Completion Queue Next call errored";

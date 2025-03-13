@@ -10,4 +10,5 @@
 - [x] Building first C++ gRPC server
 - [x] Baseline non-async server connection for basecamp
 - [x] Define async server connection for basecamp
+- [x] Callback async server implementation
 - [] Distributing work load across different servers
