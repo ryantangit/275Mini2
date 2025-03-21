@@ -27,7 +27,7 @@ python3 unit_tests.py   -- ensure the server ports are correct first
 
 ### /Server
 Server side is written in C++.
-Installation of gRPC / CMake / Protobuffer is assumed.
+Installation of gRPC / CMake / Protobuffer / OpenMPI is assumed.
 
 ```
 # Create the build folder 
@@ -39,8 +39,8 @@ cmake ..
 # Build the server binary
 make -j 4
 
-# Run Callback Async server
-./count_server_callback
+# Run Callback Async server Locally
+.mpirun -np [number_of_instances] ./count_server_callback
 
 # Optional: Run Completion Queue Async server
 ./count_server_async
