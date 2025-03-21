@@ -130,6 +130,8 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
+find_package(MPI REQUIRED)
+
 # count_grpc_proto
 add_library(count_grpc_proto
   ${count_grpc_srcs}
@@ -147,8 +149,10 @@ foreach(_target
   add_executable(${_target} "${_target}.cpp")
   target_link_libraries(${_target}
     count_grpc_proto
+		MPI::MPI_CXX
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
+
 endforeach()
 

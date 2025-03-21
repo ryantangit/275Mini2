@@ -4,16 +4,37 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 #include "count.grpc.pb.h"
+#include <mpi.h>
 
 class CountServiceImpl final: public count::CountService::CallbackService {
 	::grpc::ServerUnaryReactor * Count(::grpc::CallbackServerContext* context, const ::count::CountRequest* request, ::count::CountResponse* response) override {
 		std::string query_string = request->query();
+
+		std::cout << "Count Requested" << std::endl;
+
 		int count = query_string.length();
 		response->set_count(count);
 		grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
     reactor->Finish(grpc::Status::OK);
     return reactor; 
 	}
+
+	::grpc::ServerUnaryReactor* CountList(::grpc::CallbackServerContext* context, 
+			const ::count::CountListRequest* request, 
+			::count::CountResponse* response) override {
+		
+		std::cout << "CountList Requested" << std::endl;
+
+		int count = 0;
+		for (const auto& word: request->query()) {
+			count += word.size();
+		}
+		response->set_count(count);
+		grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
+		reactor->Finish(grpc::Status::OK);
+		return reactor;
+	}
+	
 };
 
 void RunServer() {

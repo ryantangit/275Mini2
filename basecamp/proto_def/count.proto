@@ -4,10 +4,15 @@ package count;
 
 service CountService {
 	rpc Count(CountRequest) returns (CountResponse); 
+	rpc CountList(CountListRequest) returns (CountResponse);
 }
 
 message CountRequest {
 	string query = 1;
+}
+
+message CountListRequest {
+	repeated string query = 1;
 }
 
 message CountResponse {
