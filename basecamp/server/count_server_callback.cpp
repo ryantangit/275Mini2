@@ -13,11 +13,11 @@ class CountServiceImpl final: public count::CountService::CallbackService {
 		response->set_count(count);
 		grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
     reactor->Finish(grpc::Status::OK);
-    return reactor; 
+    return reactor;
 	}
 
-	::grpc::ServerUnaryReactor* CountList(::grpc::CallbackServerContext* context, 
-			const ::count::CountListRequest* request, 
+	::grpc::ServerUnaryReactor* CountList(::grpc::CallbackServerContext* context,
+			const ::count::CountListRequest* request,
 			::count::CountResponse* response) override {
 		std::cout << "CountList Requested" << std::endl;
 		int count = 0;
@@ -43,7 +43,7 @@ class CountServiceImpl final: public count::CountService::CallbackService {
 		reactor->Finish(grpc::Status::OK);
 		return reactor;
 	}
-	
+
 };
 
 void RunServer() {
@@ -59,25 +59,25 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
-	
-	MPI_Init(&argc, &argv);
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-	if (rank == 0) {
-		RunServer();	
-	} else {
-		// Understand, this counting in the worker nodes is unnecessary, because server can handle it via strlen/string.size().
-		// But it's for demonstrative purposes that OpenMPI actually works.
-		while (true) {
-			// Wait to receive how long the message length will be. 
-			int message_count = 0;
-			MPI_Recv(&message_count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-			std::vector<char> message(message_count);
-			MPI_Recv(message.data(), message_count, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-			std::cout << "Worker Node: " << rank << " received message: " << message.data() << " size: " << message_count << std::endl;
-			MPI_Send(&message_count, 1, MPI_INT , 0, 0, MPI_COMM_WORLD);
-		}
+MPI_Init(&argc, &argv);
+int rank;
+MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+if (rank == 0) {
+	RunServer();
+} else {
+	// Understand, this counting in the worker nodes is unnecessary, because server can handle it via strlen/string.size().
+	// But it's for demonstrative purposes that OpenMPI actually works.
+	while (true) {
+		// Wait to receive how long the message length will be.
+		int message_count = 0;
+		MPI_Recv(&message_count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		std::vector<char> message(message_count);
+		MPI_Recv(message.data(), message_count, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		std::cout << "Worker Node: " << rank << " received message: " << message.data() << " size: " << message_count << std::endl;
+		MPI_Send(&message_count, 1, MPI_INT , 0, 0, MPI_COMM_WORLD);
 	}
+}
 	return 0;
 }

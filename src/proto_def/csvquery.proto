@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package csvquery;
+
+service CSVQueryService {
+	rpc CSVQueryBorough(CSVQueryRequest) returns (CSVQueryResponse);
+}
+
+message CSVQueryRequest {
+	repeated string entries = 1;
+	string borough = 2;
+}
+
+
+message CSVQueryResponse{
+	repeated string results = 1; 
+	uint32 count = 2;
+}
