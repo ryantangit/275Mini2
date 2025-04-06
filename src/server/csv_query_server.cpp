@@ -9,7 +9,6 @@ class CSVQueryServiceImpl final : public csvquery::CSVQueryService::CallbackServ
 	::grpc::ServerUnaryReactor * CSVQueryBorough(::grpc::CallbackServerContext* context, 
 			const ::csvquery::CSVQueryRequest* request, 
 			::csvquery::CSVQueryResponse* response) {
-	
 		response->set_count(1);
 		response->add_results("hello");
 		response->add_results("there");
