@@ -1,7 +1,7 @@
 #ifndef MOTORRECORDVECTOR_H
 #define MOTORRECORDVECTOR_H
 
-#include <iostream>
+#include <string>
 #include <vector>
 
 struct MotorRecordVector {

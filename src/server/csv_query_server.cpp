@@ -4,14 +4,29 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 #include "csvquery.grpc.pb.h"
+#include "parser.h"
+#include "MotorRecordVector.h"
+
 
 class CSVQueryServiceImpl final : public csvquery::CSVQueryService::CallbackService {
 	::grpc::ServerUnaryReactor * CSVQueryBorough(::grpc::CallbackServerContext* context, 
 			const ::csvquery::CSVQueryRequest* request, 
 			::csvquery::CSVQueryResponse* response) {
-		response->set_count(1);
-		response->add_results("hello");
-		response->add_results("there");
+		
+		std::vector<std::vector<std::string>> lines;
+		for (const auto& entries: request->entries()) {
+			lines.push_back(parseRecord(entries));
+		}		
+	
+		MotorRecordVector records = loadRecord(lines);
+		int count = 0;
+		for (const auto& current_borough: records.borough) {
+			if (current_borough	== request->borough()) {
+				count += 1;
+				response->set_count(count);
+			}
+		}
+
 		grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
     reactor->Finish(grpc::Status::OK);
     return reactor;	

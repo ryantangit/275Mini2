@@ -117,6 +117,7 @@ set(csvquery_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/csvquery.pb.h")
 set(csvquery_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/csvquery.grpc.pb.cc")
 set(csvquery_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/csvquery.grpc.pb.h")
 
+
 add_custom_command(
       OUTPUT "${csvquery_proto_srcs}" "${csvquery_proto_hdrs}" "${csvquery_grpc_srcs}" "${csvquery_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
@@ -130,9 +131,12 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
+include_directories(%{PROJECT_SOURCE_DIR}/cpp_parser)
+
+
+include_directories("cpp_parser")
 find_package(MPI REQUIRED)
 
-# count_grpc_proto
 add_library(csvquery_grpc_proto
   ${csvquery_grpc_srcs}
   ${csvquery_grpc_hdrs}
@@ -146,13 +150,17 @@ target_link_libraries(csvquery_grpc_proto
 
 foreach(_target
   csv_query_server)
-  add_executable(${_target} "${_target}.cpp")
+  add_executable(${_target} 
+		"${_target}.cpp"
+		"cpp_parser/parser.cpp"
+	)
   target_link_libraries(${_target}
    	csvquery_grpc_proto 
 		MPI::MPI_CXX
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
-    ${_PROTOBUF_LIBPROTOBUF})
+    ${_PROTOBUF_LIBPROTOBUF}
+	)
 
 endforeach()
 
