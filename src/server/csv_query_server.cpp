@@ -14,8 +14,9 @@ class CSVQueryServiceImpl final : public csvquery::CSVQueryService::CallbackServ
 			::csvquery::CSVQueryResponse* response) {
 		
 		std::vector<std::vector<std::string>> lines;
-		for (const auto& entries: request->entries()) {
-			lines.push_back(parseRecord(entries));
+		for (const auto& entry: request->entries()) {
+			std::cout << entry << std::endl;
+			lines.push_back(parseRecord(entry));
 		}		
 	
 		MotorRecordVector records = loadRecord(lines);

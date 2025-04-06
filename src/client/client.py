@@ -4,7 +4,7 @@ import csvquery_pb2_grpc
 
 import csv
 
-CSV_FILE = 'Motor_Vehicle_Collisions_-_Crashes_20250210.csv'
+CSV_FILE = 'Motor_Vehicle_Collisions_-_Crashes_20250219.csv'
 
 def chunk_csv_to_arrays(chunk_size=10000):
     chunks = []
@@ -17,7 +17,6 @@ def chunk_csv_to_arrays(chunk_size=10000):
         for i, row in enumerate(reader, start=1):
             current_chunk.append(','.join(row))
             if i % chunk_size == 0:
-                print(f"finish chunking {i} array")
                 chunks.append(current_chunk)
                 current_chunk = []
 
@@ -34,7 +33,7 @@ def run():
         for chunk in chunk_csv_to_arrays():
             request = csvquery_pb2.CSVQueryRequest(
                 entries=chunk,                
-                borough="Manhattan"
+                borough="MANHATTAN"
             )
             response = stub.CSVQueryBorough(request)
 

@@ -3,3 +3,5 @@ venv/
 .cache
 build/
 *_pb2*
+*.csv
+
