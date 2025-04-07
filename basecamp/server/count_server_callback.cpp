@@ -37,7 +37,6 @@ class CountServiceImpl final: public count::CountService::CallbackService {
 				worker_node += 1;
 			}
 		}
-
 		response->set_count(count);
 		grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
 		reactor->Finish(grpc::Status::OK);
