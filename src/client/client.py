@@ -7,7 +7,7 @@ import time
 import argparse
 from datetime import timedelta
 
-CSV_FILE = 'Motor_Vehicle_Collisions_-_Crashes_20250210.csv'
+CSV_FILE = 'Motor_Vehicle_Collisions_-_Crashes_20250123.csv'
 
 def chunk_csv_to_arrays(chunk_size=10000):
     chunks = []
@@ -16,6 +16,14 @@ def chunk_csv_to_arrays(chunk_size=10000):
     with open(CSV_FILE, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         next(reader)
+
+        # for i, row in enumerate(reader, start=1):
+        #     current_chunk.append(','.join(row))
+        #     if i > 30:
+        #         chunks.append(current_chunk)
+        #         current_chunk = []
+        #         return chunks
+
 
         for i, row in enumerate(reader, start=1):
             current_chunk.append(','.join(row))

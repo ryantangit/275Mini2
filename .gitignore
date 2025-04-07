@@ -4,4 +4,3 @@ venv/
 build/
 *_pb2*
 *.csv
-./src/client/Motor_Vehicle_Collisions_-_Crashes_20250210.csv

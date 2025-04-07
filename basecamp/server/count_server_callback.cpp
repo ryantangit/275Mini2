@@ -64,7 +64,7 @@ MPI_Init(&argc, &argv);
 int rank;
 MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-if (rank == 0) {
+if (rank == 0) { // 0 is master node
 	RunServer();
 } else {
 	// Understand, this counting in the worker nodes is unnecessary, because server can handle it via strlen/string.size().
