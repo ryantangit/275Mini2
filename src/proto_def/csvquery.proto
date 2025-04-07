@@ -3,16 +3,37 @@ syntax = "proto3";
 package csvquery;
 
 service CSVQueryService {
-	rpc CSVQueryBorough(CSVQueryRequest) returns (CSVQueryResponse);
+  rpc CSVQueryBorough(CSVQueryRequest) returns (CSVQueryResponse);
+  rpc CSVNumberOfPersonInjured(CSVNumberOfPersonInjuredQueryRequest) returns (CSVNumberOfPersonInjuredQueryResponse);
+  rpc CSVNumberOfPersonKilled(CSVNumberOfPersonKilledQueryRequest) returns (CSVNumberOfPersonKilledQueryResponse);
 }
 
 message CSVQueryRequest {
-	repeated string entries = 1;
-	string borough = 2;
+  repeated string entries = 1;
+  string borough = 2;
 }
 
+message CSVNumberOfPersonInjuredQueryRequest {
+  repeated string entries = 1;
+  uint32 count = 2;
+}
 
-message CSVQueryResponse{
-	repeated string results = 1; 
-	uint32 count = 2;
+message CSVNumberOfPersonKilledQueryRequest {
+  repeated string entries = 1;
+  uint32 count = 2;
+}
+
+message CSVQueryResponse {
+  repeated string results = 1; 
+  uint32 count = 2;
+}
+
+message CSVNumberOfPersonInjuredQueryResponse {
+  repeated string entries = 1;
+  uint32 count = 2;
+}
+
+message CSVNumberOfPersonKilledQueryResponse {
+  repeated string entries = 1;
+  uint32 count = 2;
 }
