@@ -74,6 +74,7 @@ if (rank == 0) {
 		int message_count = 0;
 		MPI_Recv(&message_count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		std::vector<char> message(message_count);
+		message[message_count] = '\0';
 		MPI_Recv(message.data(), message_count, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		char processor_name[MPI_MAX_PROCESSOR_NAME];
  	 	int name_len;

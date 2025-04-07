@@ -1,0 +1,4 @@
+rank 0=ryantan@10.0.0.1 slot=0
+rank 1=ryan@10.0.0.2 slot=0
+rank 2=ryantan@10.0.0.1 slot=1
+rank 3=ryan@10.0.0.2 slot=1
