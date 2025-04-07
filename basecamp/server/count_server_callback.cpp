@@ -47,7 +47,7 @@ class CountServiceImpl final: public count::CountService::CallbackService {
 };
 
 void RunServer() {
-  std::string server_address("0.0.0.0:8888");
+  std::string server_address("10.0.0.1:8888");
 	CountServiceImpl service;
 	grpc::EnableDefaultHealthCheckService(true);
 	grpc::ServerBuilder builder;
@@ -75,7 +75,10 @@ if (rank == 0) {
 		MPI_Recv(&message_count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		std::vector<char> message(message_count);
 		MPI_Recv(message.data(), message_count, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		std::cout << "Worker Node: " << rank << " received message: " << message.data() << " size: " << message_count << std::endl;
+		char processor_name[MPI_MAX_PROCESSOR_NAME];
+ 	 	int name_len;
+	  MPI_Get_processor_name(processor_name, &name_len);
+		std::cout << "Worker Node: " << rank << "Processor: " << processor_name << " received message: " << message.data() << " size: " << message_count << std::endl;
 		MPI_Send(&message_count, 1, MPI_INT , 0, 0, MPI_COMM_WORLD);
 	}
 }
