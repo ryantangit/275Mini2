@@ -1,0 +1,43 @@
+1 workernode@thinkpad - 00:01:30
+
+2 workernode@thinkpad - 00:01:13
+
+3 workernode@thinkpad - 00:01:09
+
+4 workernode@thinkpad - 00:01:07
+
+4 workernode@thinkpad 
+1 workernode@x1 			- 00:00:56:76
+
+4 workernode@thinkpad 
+2 workernode@x1 			- 00:00:51:76
+
+4 workernode@thinkpad 
+3 workernode@x1 			- 00:00:47:33
+
+4 workernode@thinkpad
+4 workernode@x1 			- 00:00:42:33
+
+4 workernode@thinkpad
+5 workernode@x1 			- 00:00:41:33
+
+4 workernode@thinkpad
+6 workernode@x1 			- 00:00:39:73
+
+4 workernode@thinkpad
+7 workernode@x1 			- 00:00:37:73
+
+4 workernode@thinkpad
+8 workernode@x1 			- 00:00:36:73
+
+
+
+
+
+
+
+
+
+
+
+	
