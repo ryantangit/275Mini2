@@ -8,7 +8,7 @@ import asyncio
 class TestPythongRPC(unittest.TestCase):
     def test_sanity(self):
         try:
-            channel = grpc.insecure_channel("0.0.0.0:8888")
+            channel = grpc.insecure_channel("10.0.0.1:8888")
             stub = count_pb2_grpc.CountServiceStub(channel)
             response = stub.Count(count_pb2.CountRequest(query="1"))
             self.assertEqual(response.count, 1)
@@ -16,7 +16,7 @@ class TestPythongRPC(unittest.TestCase):
             print(f"failed: {e} ")
 
     async def async_two_clients(self):
-        channel = grpc.aio.insecure_channel("0.0.0.0:8888")
+        channel = grpc.aio.insecure_channel("10.0.0.1:8888")
         stub = count_pb2_grpc.CountServiceStub(channel)
         test_string = "a" * 1000
         response_list = []  
@@ -31,7 +31,7 @@ class TestPythongRPC(unittest.TestCase):
        asyncio.run(self.async_two_clients())
 
     async def async_list_count(self):
-        channel = grpc.aio.insecure_channel("0.0.0.0:8888")
+        channel = grpc.aio.insecure_channel("10.0.0.1:8888")
         stub = count_pb2_grpc.CountServiceStub(channel)
         request_list = ["hello", "world", "ryan"]
         request_list_count = 14
