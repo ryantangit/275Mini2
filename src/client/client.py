@@ -38,7 +38,7 @@ def chunk_csv_to_arrays(chunk_size=10000):
 
 def run(query_type, value):
     try:
-        channel = grpc.insecure_channel("0.0.0.0:8888")
+        channel = grpc.insecure_channel("10.0.0.1:8888")
         stub = csvquery_pb2_grpc.CSVQueryServiceStub(channel)
 
         start_time = time.time()

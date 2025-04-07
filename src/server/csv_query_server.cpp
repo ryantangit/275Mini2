@@ -157,7 +157,7 @@ class CSVQueryServiceImpl final : public csvquery::CSVQueryService::CallbackServ
 };
 
 void RunServer() {
-  std::string server_address("0.0.0.0:8888");
+  std::string server_address("10.0.0.1:8888");
   CSVQueryServiceImpl service;
   grpc::EnableDefaultHealthCheckService(true);
   grpc::ServerBuilder builder;
